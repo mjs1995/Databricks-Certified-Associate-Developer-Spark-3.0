@@ -80,3 +80,39 @@
   - reduce() - Return an aggregation
   - collect() - Return the results to the driver (caution)
   - take(n) - Returns n rows to the driver 
+- why use sql with Pyspark?
+  - Its easy to load Pyspark dataframe using SQL
+  - SQL is very expressive and powerful
+  - Everyone knows SQL
+  - SQL Tables are the ideal place to store and query data
+  - SQL Tables and Views can be accessed from any Spark language 
+  - ```python
+    df = (sqlContext.read.fromat("csv")
+                    .option("header", "false")
+                    .option("inferScheam", "true")
+                    .load("dbfs:/Filestore/tables/FactInternetSalesReason.csv")
+                    .toDF("SalesOrderNumber", "SalesOrederLineNumber", "SalesReasonKey"))
+    df.show(4) / df.take(4)
+    
+    df.toPandas()
+    type(df.toPandas())
+    
+    df.cache() # cache data for faster reuse
+    
+    df.withColumnRenamed("before","after")
+    
+    display(df.take(5))
+    
+    display(df.describe(['SalesAmount', 'UnitPrice'])
+    
+    df = spark.sql('''select customerkey, geographykey, commuteDistance, BirthDate, Gender
+                      from awproject.dimcustomer''')
+    ```
+  - ![image](https://user-images.githubusercontent.com/47103479/223428999-521be573-821d-4b35-80a6-c283b6b2d2a3.png)
+  - ![image](https://user-images.githubusercontent.com/47103479/223428849-58ddc5b1-7a88-4cc9-9aeb-1d277298bd58.png)
+  - Broadcast
+    - 한 테이블은 크고 다른 하나는 작음 
+    - ```python
+      from pyspark.sql.functions import broadcast
+      spdf_salesterritory = spdf_sales.join(broadcase(spdf_salesterritory) , ['SalesTerritoryKey', 'SalesTerritoryKey'], how = 'left')
+      ```
