@@ -116,3 +116,54 @@
       from pyspark.sql.functions import broadcast
       spdf_salesterritory = spdf_sales.join(broadcase(spdf_salesterritory) , ['SalesTerritoryKey', 'SalesTerritoryKey'], how = 'left')
       ```
+- dataframes_scalar_udf
+  - ```python
+    # show all spark configuration settings 
+    sc.getConf().getAll()
+    
+    # get a specific spark configuration setting value
+    spark.conf.get("spark.sql.execution.arrow.enabled")
+    spark.conf.get("spark.sql.execution.arrow.enabled", "true)
+    ```
+  - instr : 문자열찾기 
+    - ![image](https://user-images.githubusercontent.com/47103479/224026047-df71675a-0e0d-4d09-ac26-82f7564c8a8b.png)
+    - ![image](https://user-images.githubusercontent.com/47103479/224026203-7973f696-ba84-4ad2-975b-b8701c30413e.png)
+- Running Python on Cluster Nodes
+  - ![image](https://user-images.githubusercontent.com/47103479/224026917-ae4b7675-fff3-4c4b-bcec-714e33f99083.png)
+    - 파이썬 코드를 병렬로 만들때 직렬화 역직렬화를 해야해서 많은 오버헤드를 유발함(scalar가 자바기반으로 키-값 형태로 JVMd에서 연산을 작업해야해서) 
+  - Apache Arrow
+    - ![image](https://user-images.githubusercontent.com/47103479/224027231-68e11dcd-a6e3-42a9-8786-7b74c6c110b2.png)
+      - Arrow가 판다스 데이터프레임을 대체하는 형식으로 파이썬 코드가 스칼라나 다른 언어들만큼 빠르게 동작할 수 있음
+    - <img width="1091" alt="image" src="https://user-images.githubusercontent.com/47103479/224027522-62b32fca-b04d-4dd6-8817-59bd95c983ab.png">
+    
+    - <img width="1032" alt="image" src="https://user-images.githubusercontent.com/47103479/224031322-a2bf97eb-895f-43bb-8ad8-3539bc52e70f.png">
+
+    - <img width="711" alt="image" src="https://user-images.githubusercontent.com/47103479/224032184-b16312a9-4c77-40a7-9576-31140e5ff26a.png">
+
+    - 장점
+      - Arrow가 없으면 데이터를 (역)직렬화하고 행을 전송해야 합니다. 비효율적인 인코딩을 사용하여 JVM과 R 사이의 행별 최신 CPU 설계를 채택하지 않는 형식
+      - Apache Spark 3.0에서 새로운 벡터화된 구현은 Apache Arrow를 활용하여 SparkR에 도입되어 JVM과 R 드라이버/실행기 간에 최소한의  데이터 (비)직렬화 비용
+      - createDataFrame()
+      - collect()
+      - dapply()
+      - dapplyCollect()
+      - gapply()
+      - gapplyCollect()
+      - Any Custom R Code Running on the Cluster Nodes
+
+## PySpark Parallel Database
+- Partionining Parameters
+  - numPartitions : the number of data Splits
+  - column : the column to partition by, e.g. id
+  - lowerBound : the minimum value for the column - inclusive
+  - upperBound : the maximum value of the column -be careful, it is exclusive 
+  - ![image](https://user-images.githubusercontent.com/47103479/224029514-69274b26-c5d4-4177-8bd8-6ca79ebe45f4.png)
+  - ![image](https://user-images.githubusercontent.com/47103479/224030208-1bd0032c-4ebf-4a73-a9dd-51fdb1142f0a.png)
+  - ![image](https://user-images.githubusercontent.com/47103479/224030402-03378b60-b307-491f-8194-4801b9f44d0c.png)
+
+## Scala
+- when should you use scala?
+  - need to do a lot of work directly with RDDs
+  - want to use the strongly typed dataset API
+  - Other edge cases 
+  - need the features of Scala 
